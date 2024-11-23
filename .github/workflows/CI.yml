@@ -1,12 +1,5 @@
-# Based on https://github.com/actions-rs/meta/blob/master/recipes/quickstart.md
-#
-# While our "example" application has the platform-specific code,
-# for simplicity we are compiling and testing everything on the Ubuntu environment only.
-# For multi-OS testing see the `cross.yml` workflow.
-
-on: [push, pull_request]
-
 name: Quickstart
+on: [push, pull_request]
 
 jobs:
   check:
@@ -15,14 +8,12 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
-
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: stable
           override: true
-
       - name: Run cargo check
         uses: actions-rs/cargo@v1
         continue-on-error: true # WARNING: only for this example, remove it!
@@ -35,19 +26,43 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
-
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: stable
           override: true
-
       - name: Run cargo test
         uses: actions-rs/cargo@v1
         continue-on-error: true # WARNING: only for this example, remove it!
         with:
           command: test
+
+  coverage:
+    name: Code coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - name: Install cargo-tarpaulin
+        uses: actions-rs/install@v0.1
+        with:
+          crate: cargo-tarpaulin
+          version: latest
+          use-tool-cache: true
+      - name: Run cargo tarpaulin
+        run: |
+          cargo tarpaulin --verbose --workspace --timeout 120 --out Xml
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   lints:
     name: Lints
@@ -55,7 +70,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
-
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -63,14 +77,12 @@ jobs:
           toolchain: stable
           override: true
           components: rustfmt, clippy
-
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
         continue-on-error: true # WARNING: only for this example, remove it!
         with:
           command: fmt
           args: --all -- --check
-
       - name: Run cargo clippy
         uses: actions-rs/cargo@v1
         continue-on-error: true # WARNING: only for this example, remove it!
