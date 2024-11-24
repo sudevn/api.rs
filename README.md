@@ -1,7 +1,7 @@
 # Simple Rust API Server
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/sudevn/api.rs/ci.yml?branch=main)](https://github.com/yourusername/simple-rust-api-server/actions)
-[![Coverage Status](https://coveralls.io/repos/github/sudevn/api.rs/badge.svg?branch=main)](https://coveralls.io/github/yourusername/simple-rust-api-server?branch=main)
+[![Coverage Status](https://codecov.io/gh/sudevn/api.rs/graph/badge.svg?token=DP088RGN4N)](https://codecov.io/gh/sudevn/api.rs)
 
 This is a simple REST API server written in **Rust** using the `actix-web` framework (or another framework of your choice). It demonstrates how to set up a basic API with routing, handling HTTP requests, and responding with JSON data.
 
