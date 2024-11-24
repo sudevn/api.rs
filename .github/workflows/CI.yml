@@ -36,7 +36,7 @@ jobs:
           surrealdb_username: root
           surrealdb_password: root
           surrealdb_auth: false
-          surrealdb_strict: true
+          surrealdb_strict: false
           surrealdb_log: info
           surrealdb_additional_args: --allow-all
       - name: Install stable toolchain
@@ -73,8 +73,8 @@ jobs:
           surrealdb_port: 8000
           surrealdb_username: root
           surrealdb_password: root
-          surrealdb_auth: false
-          surrealdb_strict: true
+          surrealdb_auth: false # WARNING: only for this example, remove it!
+          surrealdb_strict: false #WARNING: only for this example, remove it!
           surrealdb_log: info
           surrealdb_additional_args: --allow-all
       - name: Install stable toolchain
