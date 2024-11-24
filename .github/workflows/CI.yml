@@ -25,16 +25,6 @@ jobs:
   test:
     name: Test Suite
     runs-on: ubuntu-latest
-    services:
-      surrealdb:
-        image: surrealdb/surrealdb:latest
-        ports:
-          - 8000:8000
-        options: >-
-          --health-cmd "curl -f http://localhost:8000/health"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -62,16 +52,6 @@ jobs:
   coverage:
     name: Code coverage
     runs-on: ubuntu-latest
-    services:
-      surrealdb:
-        image: surrealdb/surrealdb:latest
-        ports:
-          - 8000:8000
-        options: >-
-          --health-cmd "curl -f http://localhost:8000/health"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
