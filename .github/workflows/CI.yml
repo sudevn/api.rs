@@ -14,6 +14,8 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - name: Enable cache
+        uses: Swatinem/rust-cache@v1
       - name: Run cargo check
         uses: actions-rs/cargo@v1
         continue-on-error: true # WARNING: only for this example, remove it!
@@ -23,6 +25,16 @@ jobs:
   test:
     name: Test Suite
     runs-on: ubuntu-latest
+    services:
+      surrealdb:
+        image: surrealdb/surrealdb:latest
+        ports:
+          - 8000:8000
+        options: >-
+          --health-cmd "curl -f http://localhost:8000/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -32,15 +44,34 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - name: Enable cache
+        uses: Swatinem/rust-cache@v1
+      - name: Start server
+        run: |
+          cargo build
+          cargo run &
+          sleep 10  # Give the server time to start
       - name: Run cargo test
         uses: actions-rs/cargo@v1
         continue-on-error: true # WARNING: only for this example, remove it!
         with:
           command: test
+        env:
+          DATABASE_URL: "http://localhost:8000"
 
   coverage:
     name: Code coverage
     runs-on: ubuntu-latest
+    services:
+      surrealdb:
+        image: surrealdb/surrealdb:latest
+        ports:
+          - 8000:8000
+        options: >-
+          --health-cmd "curl -f http://localhost:8000/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -50,6 +81,13 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - name: Enable cache
+        uses: Swatinem/rust-cache@v1
+      - name: Start server
+        run: |
+          cargo build
+          cargo run &
+          sleep 10  # Give the server time to start
       - name: Install cargo-tarpaulin
         uses: actions-rs/install@v0.1
         with:
@@ -59,6 +97,8 @@ jobs:
       - name: Run cargo tarpaulin
         run: |
           cargo tarpaulin --verbose --workspace --timeout 120 --out Xml
+        env:
+          DATABASE_URL: "http://localhost:8000"
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         env:
@@ -77,6 +117,8 @@ jobs:
           toolchain: stable
           override: true
           components: rustfmt, clippy
+      - name: Enable cache
+        uses: Swatinem/rust-cache@v1
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
         continue-on-error: true # WARNING: only for this example, remove it!
